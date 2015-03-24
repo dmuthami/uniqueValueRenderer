@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <!--The viewport meta tag is used to improve the presentation and behavior of the samples 
+      on iOS devices-->
+	<!--Download map package from link below and publish to ArcGIS Sever
+		http://www.arcgis.com/home/item.html?id=f49b335fd1af4cee8afb5978f74c4af8
+		
+		Contacts: David Muthami
+		E-Mail waruid@gmail.com
+	  -->
+	  
+    <meta name="viewport" content="initial-scale=1, maximum-scale=1,user-scalable=no">
+    <title>Unique Value Renderer</title>
+    <link rel="stylesheet" href="http://js.arcgis.com/3.13/esri/css/esri.css">
+    <style>
+      html, body, #map{
+        height: 100%;
+        margin: 0;
+        padding: 0;
+      }
+    </style>
+    <script src="http://js.arcgis.com/3.13/"></script>
+    <script>
+      var map;
+      require([
+        "esri/map", "esri/layers/FeatureLayer", "esri/InfoTemplate",
+        "esri/symbols/SimpleLineSymbol", "esri/symbols/SimpleFillSymbol",
+        "esri/renderers/UniqueValueRenderer", "esri/Color",
+        "dojo/domReady!"
+      ], function(
+        Map, FeatureLayer, InfoTemplate,
+        SimpleLineSymbol, SimpleFillSymbol,
+        UniqueValueRenderer, Color
+      ) {
+        map = new Map("map", {
+          basemap: "streets",
+    		  center: [36.87 ,-1.288],
+    		  zoom: 11,
+          slider: false
+        });
+        map.on("load", addFeatureLayer);
+
+        function addFeatureLayer() {
+          var defaultSymbol = new SimpleFillSymbol().setStyle(SimpleFillSymbol.STYLE_NULL);
+          defaultSymbol.outline.setStyle(SimpleLineSymbol.STYLE_NULL);
+
+          //create renderer
+          var renderer = new UniqueValueRenderer(defaultSymbol, "constituen");
+
+          renderer.addValue("Kamukunji", new SimpleFillSymbol().setColor(new Color([252, 198, 189, 1])));
+          renderer.addValue("Westlands", new SimpleFillSymbol().setColor(new Color([194, 195, 252, 1])));
+          renderer.addValue("Dagoretti North", new SimpleFillSymbol().setColor(new Color([230, 0, 0, 1])));
+
+		      renderer.addValue("Roysambu", new SimpleFillSymbol().setColor(new Color([189, 252, 184, 1])));
+          renderer.addValue("Langata", new SimpleFillSymbol().setColor(new Color([227, 252, 212, 1])));
+          renderer.addValue("Dagoretti South", new SimpleFillSymbol().setColor(new Color([199, 212, 252, 1])));
+          renderer.addValue("Kasarani", new SimpleFillSymbol().setColor(new Color([205, 184, 252, 1])));
+          renderer.addValue("Embakasi West", new SimpleFillSymbol().setColor(new Color([235, 252, 184, 1])));
+          renderer.addValue("Embakasi East", new SimpleFillSymbol().setColor(new Color([252, 219, 199, 1])));
+		  
+		      renderer.addValue("Embakasi North", new SimpleFillSymbol().setColor(new Color([189, 229, 252, 1])));
+          renderer.addValue("Embakasi Central", new SimpleFillSymbol().setColor(new Color([184, 252, 224, 1])));
+          renderer.addValue("Makadara", new SimpleFillSymbol().setColor(new Color([252, 239, 210, 1])));
+          
+          var featureLayer = new FeatureLayer("http://localhost:6080/arcgis/rest/services/Nairobi_Constituencies/MapServer/0", {
+            infoTemplate: new InfoTemplate("&nbsp;", "${constituen}"),
+            mode: FeatureLayer.MODE_ONDEMAND,
+            outFields: ["constituen"]
+          });
+          
+          featureLayer.setRenderer(renderer);
+          map.addLayer(featureLayer);
+        }
+      });
+    </script>
+  </head>
+  
+  <body>
+    <div id="map"></div>
+  </body>
+
+</html>
